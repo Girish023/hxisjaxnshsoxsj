@@ -6,7 +6,7 @@ from flask_cors import CORS
 from datetime import datetime
 
 api_compare_bp = Blueprint('compare', __name__)
-CORS(api_compare_bp, origins=["https://fda-vaisesika.netlify.app"])
+CORS(api_compare_bp, origins=["https://vaisesika-fda.netlify.app"])
 
 # GitHub configuration
 GITHUB_REPO_OWNER = 'Girish023'
