@@ -280,5 +280,28 @@ def handle_request():
 
     return jsonify(response)
 
+@api_compare_bp.route('/available_dates', methods=['GET'])
+def get_available_dates():
+    try:
+        response = requests.get(f'https://api.github.com/repos/{GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME}/contents/versions?ref={GITHUB_BRANCH_NAME}')
+        response.raise_for_status()
+        files = response.json()
+
+        dates = []
+        for file in files:
+            if file['type'] == 'dir':
+                date_str = file['name']
+                try:
+                    # Validate date format
+                    datetime.strptime(date_str, '%Y-%m-%d')
+                    dates.append(date_str)
+                except ValueError:
+                    continue
+
+        return jsonify({"dates": sorted(dates, reverse=True)})
+    
+    except requests.RequestException as e:
+        return jsonify({"error": f"Error fetching dates from GitHub: {e}"}), 500
+
 # if __name__ == '__main__':
 #     app.run(port=8000, debug=True)
