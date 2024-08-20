@@ -1,13 +1,9 @@
-from flask import Flask,Blueprint, jsonify
+from flask import Flask, Blueprint, jsonify, request
 import requests
 from flask_cors import CORS
 
-# app = Flask(__name__)
-# CORS(app, origins=["http://localhost:3000"])
-
-# @app.route('/recent_changes', methods=['GET'])
 api_recent_changes_bp = Blueprint('recent_changes', __name__)
-CORS(api_recent_changes_bp, origins=["https://fda-vaisesika.netlify.app"])
+CORS(api_recent_changes_bp, origins=["https://vaisesika-fda.netlify.app"])
 
 @api_recent_changes_bp.route('/recent_changes', methods=['GET'])
 def get_recent_changes():
@@ -15,14 +11,13 @@ def get_recent_changes():
 
     try:
         response = requests.get(url)
-        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx or 5xx)
+        response.raise_for_status()
 
         data = response.json()
 
         if 'content_versions' in data and data['content_versions']:
             sections = data['content_versions']
 
-            # Sort sections by amendment date (most recent first)
             sorted_sections = sorted(sections, key=lambda x: x['amendment_date'], reverse=True)
 
             grouped_sections = {}
@@ -32,7 +27,6 @@ def get_recent_changes():
                     grouped_sections[date] = []
                 grouped_sections[date].append(section)
 
-            # Prepare response data
             result = []
             for date, sections in grouped_sections.items():
                 section_data = {
@@ -55,13 +49,22 @@ def get_recent_changes():
 
                 result.append(section_data)
 
-            return jsonify(result)
+            # Pagination logic
+            page = int(request.args.get('page', 1))
+            limit = int(request.args.get('limit', 10))
+            start = (page - 1) * limit
+            end = start + limit
+            paginated_result = result[start:end]
+
+            return jsonify({
+                'data': paginated_result,
+                'total': len(result),
+                'page': page,
+                'limit': limit
+            })
 
         else:
             return jsonify({"message": "No recent changes found for Title 21."})
 
     except requests.exceptions.RequestException as e:
         return jsonify({"error": f"Error fetching data: {e}"}), 500
-
-# if __name__ == "__main__":
-#     app.run(host="127.0.0.1", port=8000)
