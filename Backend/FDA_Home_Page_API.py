@@ -4,7 +4,7 @@ from flask import Blueprint, jsonify
 import requests
 
 api_home_bp = Blueprint('home', __name__)
-CORS(api_home_bp, origins=["https://vaisesika-fda.netlify.app"])
+CORS(api_home_bp, origins=["https://fda.ravooka.com"])
 
 @api_home_bp.route('/titles', methods=['GET'])
 def get_titles():
