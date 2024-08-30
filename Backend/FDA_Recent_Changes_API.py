@@ -3,7 +3,7 @@ import requests
 from flask_cors import CORS
 
 api_recent_changes_bp = Blueprint('recent_changes', __name__)
-CORS(api_recent_changes_bp, origins=["https://vaisesika-fda.netlify.app"])
+CORS(api_recent_changes_bp, origins=["https://fda.ravooka.com"])
 
 @api_recent_changes_bp.route('/recent_changes', methods=['GET'])
 def get_recent_changes():
