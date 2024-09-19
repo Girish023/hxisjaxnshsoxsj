@@ -9,7 +9,7 @@ import requests
 # @app.route('/titles', methods=['GET'])
 
 api_home_bp = Blueprint('home', __name__)
-CORS(api_home_bp, origins=["http://localhost:3000"])
+CORS(api_home_bp)
 
 @api_home_bp.route('/titles', methods=['GET'])
 def get_titles():
