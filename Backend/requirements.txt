@@ -3,3 +3,5 @@ Flask-Cors==3.0.10
 azure-storage-blob==12.14.1
 azure-core==1.26.1
 gunicorn
+openai
+python-dotenv
